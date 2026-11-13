@@ -1,0 +1,10 @@
+{
+  "networks": [
+    {
+      "name": "travel_desk"
+    }
+  ],
+  "actions": {
+    "version": 1
+  }
+}

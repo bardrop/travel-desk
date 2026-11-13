@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Travel Desk · an open agentic website</title>
+  <meta name="description" content="Plan a trip with a team of five AI agents that run in your browser, on your own AI key. An open agentic website: the agent network is public JSON.">
+  <meta name="theme-color" content="#1d2b4f">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Public agent files (open agentic web spec): the manifest names the network. -->
+  <link rel="alternate" type="application/json" href="agent-manifest.json" title="Agent manifest">
+  <script type="module" src="js/trip-desk.js"></script>
+  <script type="module" src="site.js"></script>
+</head>
+<body>
+  <a class="skip" href="#planner">Skip to the planner</a>
+
+  <header class="masthead">
+    <div class="wrap masthead-row">
+      <a class="brand" href="./" aria-label="Travel Desk home">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="9" width="34" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M13 9v22M3 20h6" stroke="currentColor" stroke-width="2.5"/><circle cx="25" cy="20" r="4.5" fill="currentColor"/></svg>
+        <span>Travel Desk</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="#planner">Planner</a>
+        <a href="#assistant">Agents</a>
+        <a href="#open">How it works</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">An open agentic website</p>
+          <h1 id="hero-title">Five travel agents. One desk. All in your browser.</h1>
+          <p class="lede">Tell the front desk where you want to go. It hands the work to a logistics scout, a budget analyst, an itinerary planner and a local guide. They read and change the planner on this page, and they run on <strong>your</strong> AI key, which never leaves your browser.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="?demo=1#assistant" id="hero-demo">Try the offline demo</a>
+            <a class="btn btn-ghost" href="#assistant" id="hero-key">Use my own AI key</a>
+          </div>
+          <p class="hero-fine">The demo needs no key and no account. Its replies are scripted by this page; the agents, tools and planner are real.</p>
+        </div>
+
+        <figure class="network" aria-labelledby="network-caption">
+          <ol class="network-map" id="network-map">
+            <li class="node node-front" id="node-front_desk" data-agent="front_desk"><span class="node-name">Front desk</span><span class="node-job">talks to you, hands out the work</span></li>
+            <li class="node" id="node-logistics_scout" data-agent="logistics_scout"><span class="node-name">Logistics scout</span><span class="node-job">flights and where to stay</span></li>
+            <li class="node" id="node-budget_analyst" data-agent="budget_analyst"><span class="node-name">Budget analyst</span><span class="node-job">costs, caps, cheaper options</span></li>
+            <li class="node" id="node-itinerary_planner" data-agent="itinerary_planner"><span class="node-name">Itinerary planner</span><span class="node-job">fills the day board</span></li>
+            <li class="node" id="node-local_guide" data-agent="local_guide"><span class="node-name">Local guide</span><span class="node-job">tips, customs, getting around</span></li>
+          </ol>
+          <figcaption id="network-caption">The agent network. Boxes light up while an agent works. It is defined in <a href="travel_desk.network.json">travel_desk.network.json</a>.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="planner" class="planner" aria-labelledby="planner-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="planner-title">Trip planner</h2>
+          <p id="trip-summary" class="ticket-line" aria-live="polite">No trip yet.</p>
+        </div>
+        <p id="page-status" class="visually-hidden" role="status"></p>
+
+        <div class="planner-grid">
+          <form id="trip-form" class="card ticket" novalidate aria-labelledby="trip-form-title">
+            <h3 id="trip-form-title">Trip details</h3>
+            <label for="f-destination">Destination</label>
+            <select id="f-destination" name="destination"></select>
+            <label for="f-origin">Flying from</label>
+            <select id="f-origin" name="origin"></select>
+            <div class="pair">
+              <div>
+                <label for="f-start">Start date</label>
+                <input id="f-start" name="start" type="date" required>
+              </div>
+              <div>
+                <label for="f-nights">Nights</label>
+                <input id="f-nights" name="nights" type="number" min="1" max="14" step="1" value="4" inputmode="numeric" required>
+              </div>
+            </div>
+            <div class="pair">
+              <div>
+                <label for="f-travelers">Travelers</label>
+                <input id="f-travelers" name="travelers" type="number" min="1" max="8" step="1" value="2" inputmode="numeric" required>
+              </div>
+              <div>
+                <label for="f-style">Style</label>
+                <select id="f-style" name="style"></select>
+              </div>
+            </div>
+            <label for="f-cap">Budget cap in USD <span class="optional">(optional)</span></label>
+            <input id="f-cap" name="cap" type="number" min="0" max="250000" step="50" inputmode="numeric" placeholder="No cap">
+            <p id="trip-form-error" class="form-error" role="alert"></p>
+            <div class="form-actions">
+              <button type="button" id="btn-new-trip" class="btn btn-primary">Start a new trip</button>
+              <button type="button" id="btn-update-trip" class="btn btn-ghost">Update details</button>
+            </div>
+            <p class="fine">Starting a new trip clears the day board. Updating keeps it.</p>
+          </form>
+
+          <div class="board-wrap card">
+            <h3>Day board</h3>
+            <p id="board-empty" class="empty">Your days appear here once a trip starts. Add activities from each day's list, or ask the agents to plan it.</p>
+            <ol id="board" class="board"></ol>
+          </div>
+
+          <aside class="side">
+            <section class="card budget" aria-labelledby="budget-title">
+              <h3 id="budget-title">Budget estimate</h3>
+              <p id="budget-total" class="budget-total" aria-live="polite">—</p>
+              <p id="budget-per-person" class="budget-sub">Start a trip to see its budget.</p>
+              <ul id="budget-lines" class="lines"></ul>
+              <p id="budget-cap" class="cap" data-status=""></p>
+              <h4>Cheaper options</h4>
+              <ul id="budget-savings" class="savings"></ul>
+              <p id="budget-note" class="fine">Rough planning bands compiled by Travel Desk in 2026. Not live prices or quotes: check real fares and rooms before you book.</p>
+            </section>
+            <section class="card guide" aria-labelledby="guide-title">
+              <p class="eyebrow">Destination guide</p>
+              <h3 id="guide-title">Guide</h3>
+              <div id="guide-body"></div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="assistant" class="assistant" aria-labelledby="assistant-heading">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="assistant-heading">Ask the travel desk</h2>
+          <p>Ask for a plan, a budget check, flights and stays, or local tips. The agents work on the planner above.</p>
+        </div>
+        <div id="demo-banner" class="demo-banner" hidden>
+          <strong>Offline demo.</strong> Replies are scripted by this page, not written by an AI, and nothing leaves your browser. The five agents, their tools and the planner are real. <a id="demo-exit" href="./#assistant">Leave the demo and use my own key</a>
+        </div>
+        <div id="demo-offer" class="demo-offer">
+          <p>No AI key? <a id="demo-enter" href="?demo=1#assistant">Try the offline demo</a>. With a key, open <strong>AI model settings</strong> below. Your key is saved only in this browser and is sent only to the AI provider you pick.</p>
+        </div>
+        <div id="demo-prompts" class="demo-prompts" hidden>
+          <p>Try one of these:</p>
+          <ul id="demo-prompt-list"></ul>
+        </div>
+        <p class="assistant-note">Your messages and the planner's data go to the AI provider you choose in the settings below. The page asks you before anything that cannot be undone.</p>
+        <p id="assistant-status" role="status">Connecting the agents… If this message stays, they could not load. You can still use the planner directly.</p>
+        <div id="agent-app">
+          <div data-ns-slot="header"></div>
+          <div class="assistant-panels">
+            <div data-ns-slot="chat"></div>
+            <div data-ns-slot="agents"></div>
+          </div>
+          <div data-ns-slot="settings"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="open" class="open" aria-labelledby="open-title">
+      <div class="wrap">
+        <h2 id="open-title">How it works</h2>
+        <ol class="steps">
+          <li class="card"><h3>Public JSON</h3><p>The five agents, their instructions and their tools are one data file: <a href="travel_desk.network.json">travel_desk.network.json</a>, listed in <a href="agent-manifest.json">agent-manifest.json</a>. No code, no secrets.</p></li>
+          <li class="card"><h3>Runs in your browser</h3><p>The open-source runtime in <code>runtime/</code> reads that file and runs the agents in this tab. There is no agent server.</p></li>
+          <li class="card"><h3>Your key, your model</h3><p>You pick the AI provider and model. Your key stays in this browser and goes only to that provider. The site pays for nothing and sees nothing.</p></li>
+          <li class="card"><h3>Real tools, real limits</h3><p>The agents use this page's own functions as tools: read the trip, price it, fill the board. Starting over asks you first.</p></li>
+          <li class="card"><h3>Callable by other sites</h3><p>Other agentic websites can call this desk at <code id="network-url">travel_desk</code>. They run it on their visitor's key and get advice, not access to this page.</p></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Travel Desk plans and estimates. It does not book, take payments or check visas. Amounts are rough 2026 planning bands, not quotes.</p>
+      <p>MIT licensed. Built for the Open Agentic Web Challenge on the open agentic web spec; the browser runtime is Apache 2.0 (see <a href="runtime/LICENSE.txt">runtime/LICENSE.txt</a>).</p>
+    </div>
+  </footer>
+</body>
+</html>

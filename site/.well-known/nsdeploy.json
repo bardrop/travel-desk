@@ -1,0 +1,18 @@
+{
+  "protocol": "nsdeploy-link/v1",
+  "exports": [
+    {
+      "network": "travel_desk",
+      "front_man": "front_desk",
+      "aliases": [
+        "travel_desk",
+        "front_desk"
+      ],
+      "url": "travel_desk"
+    }
+  ],
+  "imports": [],
+  "link_updates": {
+    "mode": "browser-local"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "brand": "Travel Desk",
+  "networks": [
+    {
+      "name": "travel_desk",
+      "front_man": "front_desk",
+      "hocon": "./travel_desk.network.json",
+      "description": "Plan a trip with five travel agents: a front desk, a logistics scout, a budget analyst, an itinerary planner and a local guide.",
+      "tags": [
+        "agentified-website",
+        "travel",
+        "trip-planning",
+        "multi-agent"
+      ],
+      "sample_queries": [
+        "Plan the days of my current trip: one big sight each morning and something fun each evening.",
+        "Where should we stay in Kyoto, and what would round-trip flights from Europe cost for two?",
+        "Does my current trip fit its budget cap? What is the cheapest change that would make it fit?",
+        "What should I know about customs and getting around in Hanoi?",
+        "Start a new trip: 5 nights in Mexico City for 3 people from North America, budget style, starting 6 weeks from today.",
+        "Can you book our flights and hotel and pay for them?"
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://api.otari.ai/api/v1",
+    "mock": false,
+    "byok_router": "https://api.otari.ai/api/v1"
+  },
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Local agents and page-local actions only."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "travel_desk",
+    "front_man": "front_desk",
+    "available": false,
+    "reason": "This is a static bundle; a public MCP facade requires an application host."
+  },
+  "theme": {
+    "primary": "#1d2b4f"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "travel_desk",
+        "front_man": "front_desk",
+        "aliases": [
+          "travel_desk",
+          "front_desk"
+        ],
+        "url": "travel_desk"
+      }
+    ],
+    "imports": [],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  },
+  "actions": {
+    "version": 1,
+    "module": "./site-actions.js",
+    "bridge": "./bridge/action-bridge.html",
+    "agentTools": [
+      "get_trip_state",
+      "get_destination_guide",
+      "estimate_budget",
+      "set_trip_details",
+      "add_itinerary_items",
+      "remove_itinerary_items",
+      "start_new_trip"
+    ]
+  }
+}

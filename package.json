@@ -1,0 +1,24 @@
+{
+  "name": "travel-desk-agentic-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Travel Desk: an open agentic website where five travel agents plan a trip in the visitor's browser, on the visitor's own AI key.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node tools/agentify-website/scripts/build_network.mjs site/travel_desk.hocon --manifest site/agent-manifest.json",
+    "check": "node tools/agentify-website/scripts/build_network.mjs site/travel_desk.hocon --manifest site/agent-manifest.json --check",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "lint": "eslint .",
+    "serve": "node tools/agentify-website/scripts/serve_site.mjs site --port 8080",
+    "verify": "npm run check && npm run lint && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0"
+  }
+}
